@@ -1,4 +1,3 @@
-const fs = require("fs");
 const axios = require("axios");
 const follow = require("text-file-follower");
 const path = require("path");
@@ -15,7 +14,6 @@ axios.get(sparktracks).then( async (res) => {
     console.log("done! ready to rock!");
 });
 
-// watch logfile
 let logfile = path.resolve(process.env.USERPROFILE + "\\AppData\\Local\\FortniteGame\\Saved\\Logs\\FortniteGame.log");
 
 let state = {song: "", instrument: "", difficulty: "", stage: ""};
@@ -23,6 +21,7 @@ let lastFestivalRelatedEvent = 0;
 
 let follower = follow(logfile);
 
+// watch logfile
 follower.on("line", (name, line) => {
     let withoutTimestamp = line.split("]").slice(2).join("]");
 
