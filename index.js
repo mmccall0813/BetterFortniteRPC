@@ -27,7 +27,7 @@ follower.on("line", (name, line) => {
 
     if(withoutTimestamp.toLowerCase().includes("pilgrim")){ 
         lastFestivalRelatedEvent = Date.now();
-        // console.log(line); // for testing purposes
+        // if(withoutTimestamp.startsWith("LogPilgrim")) console.log(line); // for testing purposes
     }
 
     if(withoutTimestamp.startsWith("LogPilgrimGameEvaluator: UPilgrimGameEvaluator::SetDifficultyAndGetGems")){
@@ -67,22 +67,71 @@ follower.on("line", (name, line) => {
 
         updateStatus();
     }
+    
+    if(withoutTimestamp.startsWith("LogPilgrimQuickplayStateMachine")){
+        
+        let leaving = withoutTimestamp.includes("Leaving ");
+        let feststate = withoutTimestamp.split("Pilgrim Quickplay state ")[1];
+        
+        // console.log(`now ${leaving ? "leaving" : "in"} fest state ` + feststate); // spams logs too much
+        switch(feststate){
+            case "EPilgrimQuickplayState::Pregame":
+                if(leaving){
+                    console.log("clearing backstage status");
+                    state.stage = "";
+                } else {
+                    console.log("setting status to backstage");
+                    state.stage = "pregame";
+                }
+                updateStatus();
+            break;
+            case "EPilgrimQuickplayState::SongResults":
+                if(leaving){
+                    console.log("clearing results status")
+                    state.stage = "";
+                } else {
+                    console.log("setting status to results");
+                    state.stage = "results";
+                }
+            break;
+        }
 
+    }
 })
 
 const rpc = new RPC.Client({"transport": "ipc"});
 
 function updateStatus(){
-    if(state.stage === "playing"){
-        rpc.setActivity( {
-            "details": tracks[state.song].track.an + " - " + tracks[state.song].track.tt,
-            "state": state.instrument + " on " + state.difficulty,
-            "largeImageKey": tracks[state.song].track.au,
-            "startTimestamp": Date.now()
-        });
-    }
-    if(state.stage === ""){
-        rpc.clearActivity();
+    switch(state.stage){
+        case "playing":
+            rpc.setActivity( {
+                "details": tracks[state.song].track.an + " - " + tracks[state.song].track.tt,
+                "state": state.instrument + " on " + state.difficulty,
+                "largeImageKey": tracks[state.song].track.au,
+                "startTimestamp": Date.now()
+            });
+        break;
+        case "pregame":
+            rpc.setActivity( {
+                "details": "Backstage",
+                "state": "Choosing a song...",
+                "largeImageKey": "festlogo",
+                "startTimestamp": Date.now()
+            })
+        break;
+        case "results":
+            rpc.setActivity( {
+                "details": "Song Results",
+                "state": tracks[state.song].track.tt + ` on ${state.difficulty} ${state.instrument}`,
+                "largeImageKey": tracks[state.song].track.au,
+                "startTimestamp": Date.now()
+            });
+        break;
+        case "":
+            setTimeout( () => {
+                if(state.stage === "") rpc.clearActivity();
+            }, 5000)
+        break;
     }
 }
 
