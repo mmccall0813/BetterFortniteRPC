@@ -8,4 +8,6 @@ can also scrobble to last.fm so you can track how many times you failed that fc 
 
 requires [nodejs](https://nodejs.org/en/download/prebuilt-installer)
 
-run `start.bat`
+run `install_deps.bat` to install dependencies (only need to do on first run)
+
+then `start.bat`
