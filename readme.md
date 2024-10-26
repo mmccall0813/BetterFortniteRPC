@@ -4,6 +4,8 @@ reads fortnite's log file and displays what you're playing in festival in your d
 
 can also scrobble to last.fm so you can track how many times you failed that fc and had to restart. (see config.json for setup)
 
+also has optional analytics, which are sent to a public discord bot for statistics and stuff
+
 ## running
 
 requires [nodejs](https://nodejs.org/en/download/prebuilt-installer)

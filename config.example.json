@@ -10,5 +10,11 @@
         
         "authToken": "",
         "session_key": ""
-    }
+    },
+    "analytics": {
+        "__COMMENT": "Sends the following information to an analytics server while the script is running: your identifier, what songs you've started, how long you've played each song, what difficulty and instrument you're playing",
+        "enable": false,
+        "identifier": "anonymous"
+    },
+    "firstrun": true
 }
