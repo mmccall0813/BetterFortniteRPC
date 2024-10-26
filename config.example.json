@@ -1,0 +1,14 @@
+{
+    "lastfm": {
+        "__COMMENT": "Your password is erased on first run with scrobbling enabled and will be used to calculate the authToken. Then on first login, session_key will be populated.",
+        "__COMMENT2": "If you dont already have an API key and API secret, see https://www.last.fm/api/authentication",
+        "scrobbling": false,
+        "api_key": "",
+        "api_secret": "",
+        "username": "",
+        "password": "",
+        
+        "authToken": "",
+        "session_key": ""
+    }
+}

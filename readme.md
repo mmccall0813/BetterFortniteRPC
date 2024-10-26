@@ -2,7 +2,7 @@
 
 reads fortnite's log file and displays what you're playing in festival in your discord status.
 
-very unfinished. will add shit later, eventually...
+can also scrobble to last.fm so you can track how many times you failed that fc and had to restart. (see config.json for setup)
 
 ## running
 

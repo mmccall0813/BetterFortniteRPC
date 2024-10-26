@@ -2,6 +2,9 @@ const axios = require("axios");
 const follow = require("text-file-follower");
 const path = require("path");
 const RPC = require("discord-rpc");
+const fs = require("fs");
+const crypto = require("crypto");
+const lastfm = require("simple-lastfm");
 
 let sparktracks = "https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/pages/fortnite-game/spark-tracks";
 
@@ -11,8 +14,44 @@ let tracks = {};
 
 axios.get(sparktracks).then( async (res) => {
     tracks = res.data;
-    console.log("done! ready to rock!");
+    console.log("done grabbing tracklist, ready to broadcast status");
 });
+
+if(!fs.existsSync("./config.json")) fs.copyFileSync("./config.example.json", "./config.json");
+let config = require("./config.json");
+
+if(config.lastfm.scrobbling && config.lastfm.password !== ""){
+    console.log("removing password from config and generating authToken...");
+    config.lastfm.authToken = crypto.createHash("md5").update(config.lastfm.username + crypto.createHash("md5").update(config.lastfm.password).digest("hex")).digest("hex");
+    config.lastfm.password = "";
+    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4));
+}
+
+let fm = new lastfm({
+    api_key: config.lastfm.api_key,
+    api_secret: config.lastfm.api_secret,
+    username: config.lastfm.username,
+    authToken: config.lastfm.authToken,
+    session_key: config.lastfm.session_key
+});
+
+if(config.lastfm.scrobbling){
+    if(!config.lastfm.session_key){
+        console.log("attemping lastfm login...");
+        fm.getSessionKey((res) => {
+            if(res.success){
+                console.log("successful lastfm login! saving session key...")
+                config.lastfm.session_key = res.session_key;
+                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4));
+            } else {
+                console.log("Failed!");
+                console.log(res.error);
+            }
+        });
+    } else {
+        console.log("reusing lastfm existing session key...")
+    }
+}
 
 let logfile = path.resolve(process.env.USERPROFILE + "\\AppData\\Local\\FortniteGame\\Saved\\Logs\\FortniteGame.log");
 
@@ -45,10 +84,7 @@ follower.on("line", (name, line) => {
     }
 
     if(withoutTimestamp === "LogPilgrimGame: UPilgrimGame::StopSong"){
-        state.song = "";
         state.stage = "";
-        state.instrument = "";
-        state.difficulty = "";
 
         console.log("song stopped")
 
@@ -59,11 +95,24 @@ follower.on("line", (name, line) => {
         let info = withoutTimestamp.replace("LogPilgrimSongPreloader: UPilgrimControllerComponent_SongPreloader::OnFinishedLoadingSong: player ", "");
         let idx = info.lastIndexOf(", song ");
         let player = info.substring(0, idx);
-        let song = info.substring(idx + 7);
+        let song = info.substring(idx + 7).toLowerCase();
 
-        state.song = song.toLowerCase();
+        state.song = song;
 
         console.log("starting song " + song + " as player " + player);
+
+        if(config.lastfm.scrobbling){
+            let halflen = tracks[state.song].track.dn / 2;
+            console.log(`waiting ${halflen} seconds (half song length) before scrobbling ${tracks[state.song].track.tt}`);
+            setTimeout( () => {
+                if(state.song === song){
+                    console.log(`scrobbling ${tracks[state.song].track.tt}...`);
+                    fm.scrobbleTrack({artist: tracks[state.song].track.an, track: tracks[state.song].track.tt, callback: (res) => {
+                        console.log("scrobble complete, api response: " + JSON.stringify(res));
+                    }});
+                }
+            }, halflen * 1000)
+        }
 
         updateStatus();
     }
@@ -93,6 +142,7 @@ follower.on("line", (name, line) => {
                     console.log("setting status to results");
                     state.stage = "results";
                 }
+                updateStatus();
             break;
         }
 
@@ -114,7 +164,7 @@ function updateStatus(){
         case "pregame":
             rpc.setActivity( {
                 "details": "Backstage",
-                "state": "Choosing a song...",
+                "state": "Choosing what to play...",
                 "largeImageKey": "festlogo",
                 "startTimestamp": Date.now()
             })
@@ -125,7 +175,7 @@ function updateStatus(){
                 "state": tracks[state.song].track.tt + ` on ${state.difficulty} ${state.instrument}`,
                 "largeImageKey": tracks[state.song].track.au,
                 "startTimestamp": Date.now()
-            });
+            })
         break;
         case "":
             setTimeout( () => {
