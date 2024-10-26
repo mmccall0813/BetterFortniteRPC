@@ -6,18 +6,6 @@ can also scrobble to last.fm so you can track how many times you failed that fc 
 
 ## running
 
-requires nodejs
+requires [nodejs](https://nodejs.org/en/download/prebuilt-installer)
 
-run this in project dir to install deps
-
-```
-npm install
-```
-
-and then
-
-```
-node index.js
-```
-
-to run
+run `start.bat`
