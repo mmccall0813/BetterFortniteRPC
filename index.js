@@ -172,7 +172,7 @@ function updateStatus(){
         case "results":
             rpc.setActivity( {
                 "details": "Song Results",
-                "state": tracks[state.song].track.tt + ` on ${state.difficulty} ${state.instrument}`,
+                "state": tracks[state.song].track.tt + ` | ${state.difficulty} ${state.instrument}`,
                 "largeImageKey": tracks[state.song].track.au,
                 "startTimestamp": Date.now()
             })
