@@ -103,7 +103,7 @@ let follower = follow(logfile);
 // watch logfile
 follower.on("line", followerLine);
 
-// checks the create time, if its different than last time, restart the log file watcher
+// checks the filesize, if its smaller than last time, restart the log file watcher
 let curSize = fs.statSync(logfile).size;
 let restartCheckCounter = 0;
 fs.watch(logfile, (eventType, fileName) => {
