@@ -89,6 +89,7 @@ let socket;
 
 if(config.analytics.enable){
     console.log("connecting to analytics server...")
+    // socket = io("ws://localhost:8924");
     socket = io("ws://festrpc.macrottie.dev:8924");
 
     socket.on("connect", () => {
@@ -100,7 +101,29 @@ if(config.analytics.enable){
 let follower = follow(logfile);
 
 // watch logfile
-follower.on("line", (name, line) => {
+follower.on("line", followerLine);
+
+// checks the create time, if its different than last time, restart the log file watcher
+let curSize = fs.statSync(logfile).size;
+let restartCheckCounter = 0;
+fs.watch(logfile, (eventType, fileName) => {
+    if(restartCheckCounter % 100 !== 0){
+        restartCheckCounter++;
+        return;
+    }
+    restartCheckCounter = 0;
+    
+    if(fs.statSync(logfile).size < curSize){
+        console.log("detected game restart, restarting log watcher...");
+        curSize = fs.statSync(logfile).size;
+        follower.close();
+        follower = follow(logfile);
+        follower.on("line", followerLine)
+    }
+
+})
+
+function followerLine(name, line) {
     let withoutTimestamp = line.split("]").slice(2).join("]");
 
     if(withoutTimestamp.toLowerCase().includes("pilgrim")){ 
@@ -115,11 +138,16 @@ follower.on("line", (name, line) => {
 
         console.log("detected " + instrument + " on " + difficulty);
 
+        let song = state.song;
+        if(!song){
+            console.log("couldn't find song id... did you start the script starting a song?");
+            return;
+        }
+
         state.instrument = instrument;
         state.difficulty = difficulty;
         state.stage = "playing";
 
-        let song = state.song;
         if(config.lastfm.scrobbling){
             let halflen = tracks[state.song].track.dn / 2;
             console.log(`waiting ${halflen} seconds (half song length) before scrobbling ${tracks[state.song].track.tt}`);
@@ -154,15 +182,18 @@ follower.on("line", (name, line) => {
         updateStatus();
     }
 
-    if(withoutTimestamp.startsWith("LogPilgrimSongPreloader: UPilgrimControllerComponent_SongPreloader::OnFinishedLoadingSong:")){
-        let info = withoutTimestamp.replace("LogPilgrimSongPreloader: UPilgrimControllerComponent_SongPreloader::OnFinishedLoadingSong: player ", "");
-        let idx = info.lastIndexOf(", song ");
-        let player = info.substring(0, idx);
-        let song = info.substring(idx + 7).toLowerCase();
+    if(withoutTimestamp.startsWith("LogPilgrimFTUEControllerComponent: UPilgrimFTUEControllerComponent::EndPlay")){
+        state.stage = "";
+
+        updateStatus();
+    }
+
+    if(withoutTimestamp.startsWith("LogPilgrimMediaStreamer: UPilgrimMediaStreamer::PrepareSong:")){
+        let song = withoutTimestamp.replace("LogPilgrimMediaStreamer: UPilgrimMediaStreamer::PrepareSong: Preparing song ", "");
 
         state.song = song;
 
-        console.log("starting song " + song + " as player " + player);
+        console.log("starting song " + song);
 
 
         state.timestamp = Date.now();
@@ -208,9 +239,8 @@ follower.on("line", (name, line) => {
                 }
             break;
         }
-
     }
-})
+}
 
 let flipper = false;
 setInterval( () => {
