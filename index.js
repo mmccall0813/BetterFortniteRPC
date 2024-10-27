@@ -90,7 +90,7 @@ let socket;
 if(config.analytics.enable){
     console.log("connecting to analytics server...")
     // socket = io("ws://localhost:8924");
-    socket = io("ws://festrpc.macrottie.dev:8924");
+    socket = io("ws://festrpc.highwi.re:8924");
 
     socket.on("connect", () => {
         console.log("connected to analytics server");
