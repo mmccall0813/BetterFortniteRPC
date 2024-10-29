@@ -191,7 +191,7 @@ function followerLine(name, line) {
     if(withoutTimestamp.startsWith("LogPilgrimMediaStreamer: UPilgrimMediaStreamer::PrepareSong:")){
         let song = withoutTimestamp.replace("LogPilgrimMediaStreamer: UPilgrimMediaStreamer::PrepareSong: Preparing song ", "");
 
-        state.song = song;
+        state.song = song.toLowerCase();
 
         console.log("starting song " + song);
 
