@@ -128,7 +128,7 @@ function followerLine(name, line) {
 
     if(withoutTimestamp.toLowerCase().includes("pilgrim")){ 
         lastFestivalRelatedEvent = Date.now();
-        // if(withoutTimestamp.startsWith("LogPilgrim")) console.log(line); // for testing purposes
+       // if(withoutTimestamp.startsWith("LogPilgrim")) console.log(line); // for testing purposes
     }
 
     if(withoutTimestamp.startsWith("LogPilgrimGameEvaluator: UPilgrimGameEvaluator::SetDifficultyAndGetGems")){
@@ -188,8 +188,8 @@ function followerLine(name, line) {
         updateStatus();
     }
 
-    if(withoutTimestamp.startsWith("LogPilgrimMediaStreamer: UPilgrimMediaStreamer::PrepareSong:")){
-        let song = withoutTimestamp.replace("LogPilgrimMediaStreamer: UPilgrimMediaStreamer::PrepareSong: Preparing song ", "");
+    if(/Client [-]?[0-9] received song to play: /.test(withoutTimestamp)){
+        let song = withoutTimestamp.split(/Client [-]?[0-9] received song to play: /g)[1].split(" ")[0];
 
         state.song = song.toLowerCase();
 
