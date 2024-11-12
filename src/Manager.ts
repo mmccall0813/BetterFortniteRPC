@@ -131,7 +131,7 @@ export default class PresenceManager {
                  this.rpcClient.setActivity(activity);
             break;
             case "Lego":
-
+                this.rpcClient.setActivity({"details": "Playing LEGO Fortnite"});
             break;
         }
     }
