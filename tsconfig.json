@@ -1,0 +1,11 @@
+{
+    "include": ["src/**/*"],
+    "compilerOptions": {
+        "outDir": "./out/",
+        "strict": true,
+        "module": "NodeNext",
+        "target": "ESNext",
+        "esModuleInterop": true,
+        "sourceMap": true
+    }
+}

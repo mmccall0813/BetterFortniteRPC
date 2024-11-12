@@ -1,10 +1,19 @@
 {
   "dependencies": {
+    "@types/node": "^22.8.7",
+    "@types/prompt-sync": "^4.2.3",
     "axios": "^1.7.7",
     "discord-rpc": "^4.0.1",
+    "fast-xml-parser": "^4.5.0",
+    "lastfm-ts-api": "^2.1.0",
     "prompt-sync": "^4.2.0",
-    "simple-lastfm": "^1.0.6",
     "socket.io-client": "^4.8.1",
-    "text-file-follower": "^0.1.0"
+    "typescript": "^5.6.3"
+  },
+  "scripts": {
+    "start": "tsc && node ./out/index.js"
+  },
+  "devDependencies": {
+    "@types/discord-rpc": "^4.0.8"
   }
 }

@@ -1,15 +1,19 @@
-# fortnite festival discord status
+# BetterFortniteRPC
 
-reads fortnite's log file and displays what you're playing in festival in your discord status.
+BetterFortniteRPC is a tool that enhances your Fortnite experience by providing rich presence features for Discord. It supports multiple modes including Creative, Festival, and Lego.
 
-can also scrobble to last.fm so you can track how many times you failed that fc and had to restart. (see config.json for setup)
+## Features
 
-also has optional analytics, which are sent to a public discord bot for statistics and stuff
+- **Creative Mode**: Displays island information and player skin.
+- **Festival Mode**: Shows song details, instrument, and stage information.
+- **Lego Mode**: Simple mode display.
 
-## running
+## Running
 
-requires [nodejs](https://nodejs.org/en/download/prebuilt-installer)
+Make sure you have Node.js installed. If not, go install the latest LTS version from [the NodeJS website](https://nodejs.org/en/download/prebuilt-installer).
 
-run `install_deps.bat` to install dependencies (only need to do on first run)
+Clone the repo through whatever means you normally clone repos with (eg. Github Desktop, Git CLI, or just downloading the code zip...)
 
-then `start.bat`
+Run the `install_deps.bat` script in the project directory to make sure all dependencies are installed and up to date.
+
+Then run `start.bat` to build and run BetterFortniteRPC.
