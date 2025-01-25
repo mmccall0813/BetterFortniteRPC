@@ -23,8 +23,8 @@ export function registerCreativeHandler(watcher: LogWatcher, manager: PresenceMa
     watcher.addLineHandler( async (line) => {
         let withoutTimestamp = line.split("]").slice(2).join("]");
 
-        let islandCodeFinder = "LogFortLoadingScreen: [FLoadingScreenParams::UpdateZoneConfigFromActivity] - Setting Zone Config for Activity ";
-        if(withoutTimestamp.startsWith(islandCodeFinder)){
+        let islandCodeFinder = /LogFortLoadingScreen: \[....\] Setting Zone Config for Activity /g;
+        if(islandCodeFinder.test(withoutTimestamp)){
             islandCode = withoutTimestamp.replace(islandCodeFinder, "").split("?")[0];
 
             console.log("Now in Creative with island code " + islandCode);

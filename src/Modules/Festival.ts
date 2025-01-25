@@ -81,8 +81,8 @@ export async function registerFestivalHandler(watcher: LogWatcher, manager: Pres
         // im using extra spacing between the conditionals here to its easier for my ape brain to see where they start and end
 
 
-        let difficultyFinder = "LogPilgrimGameEvaluator: UPilgrimGameEvaluator::SetDifficultyAndGetGems";
-        if(withoutTimestamp.startsWith(difficultyFinder)){
+        let difficultyFinder = /LogPilgrimGameEvaluator: \[....\] : Song data set. [0-9]* gems found for /g;
+        if(difficultyFinder.test(withoutTimestamp)){
             let info = withoutTimestamp.replace(difficultyFinder, "");
             let difficulty = info.split("EPilgrimSongDifficulty::Difficulty")[1].split(" ")[0];
             let instrument = info.split("EPilgrimTrackType::Track")[1].split(" ")[0].replace("Plastic", "Pro ").replace("Drum", "Drums").replace("Guitar", "Lead");
@@ -165,7 +165,7 @@ export async function registerFestivalHandler(watcher: LogWatcher, manager: Pres
 
 
 
-        if(withoutTimestamp.startsWith("LogPilgrimFTUEControllerComponent: UPilgrimFTUEControllerComponent::EndPlay") || withoutTimestamp === "LogPilgrimGame: UPilgrimGame::StopSong"){
+        if(withoutTimestamp.includes("UPilgrimFTUEControllerComponent::EndPlay") || /LogPilgrimGame: \[....\] Stopping song/g.test(withoutTimestamp)){
             festState.stage = "";
             connectionsManager.stopSong();
 

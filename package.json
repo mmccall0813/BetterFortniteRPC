@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@types/discord-rpc": "^4.0.8",
     "@types/node": "^22.8.7",
     "@types/prompt-sync": "^4.2.3",
     "axios": "^1.7.7",
@@ -12,8 +13,5 @@
   },
   "scripts": {
     "start": "tsc && node ./out/index.js"
-  },
-  "devDependencies": {
-    "@types/discord-rpc": "^4.0.8"
   }
 }
