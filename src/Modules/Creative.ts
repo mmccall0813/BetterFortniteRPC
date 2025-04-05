@@ -14,7 +14,8 @@ export interface IslandMeta {
         url_s: string,
         url_m: string,
         url: string
-    }
+    },
+    tagline: string
 }
 
 export function registerCreativeHandler(watcher: LogWatcher, manager: PresenceManager){

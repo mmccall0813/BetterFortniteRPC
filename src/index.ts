@@ -8,7 +8,7 @@ import * as fs from "fs";
 import { firstRun, Config } from "./FirstRun";
 import { registerLegoHandler } from "./Modules/Lego";
 
-export let version = "v1.0.0";
+export let version = "v1.0.1";
 
 if(!fs.existsSync("config.json")) firstRun();
 const config: Config = JSON.parse(fs.readFileSync("config.json").toString());
@@ -50,6 +50,11 @@ watcher.addLineHandler( async (line) => {
     if(line.includes(localNameFinder)){
         let localName = line.split(localNameFinder)[1];
         manager.localName = localName;
+    }
+
+    if(line.startsWith("Log file closed")){
+        await manager.clearStatus();
+        await manager.setMode("");
     }
     // if(line.includes("LogPilgrim")) console.log(line);
 });

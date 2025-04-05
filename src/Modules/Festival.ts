@@ -102,7 +102,7 @@ export async function registerFestivalHandler(watcher: LogWatcher, manager: Pres
 
 
 
-        let songIdFinder = /Client [-]?[0-9] received song to play: /g;
+        let songIdFinder = /local client finished loading song /g;
         if(songIdFinder.test(withoutTimestamp)){
             let song = withoutTimestamp.split(songIdFinder)[1].split(" ")[0];
             song = song.toLowerCase();

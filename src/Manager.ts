@@ -32,9 +32,10 @@ export default class PresenceManager {
         this.rpcClient = null;
         this.timestamp = 0;
         this.festivalState = null;
-        this.updateTimestamp();
         this.localName = "";
         this.config = config;
+
+        this.updateTimestamp();
     }
 
     async setMode(mode: SupportedModes) {
@@ -75,7 +76,12 @@ export default class PresenceManager {
         switch(this.currentMode){
             case "Creative":
                 this.rpcClient.setActivity({
-                    "largeImageKey": this.islandMeta?.square_image_urls !== undefined ? this.islandMeta?.square_image_urls.url_m : this.islandMeta?.image_urls.url_m,
+                    // what.
+                    // todo: add better ballistic support
+                    "largeImageKey": this.islandMeta?.square_image_urls !== undefined ? this.islandMeta?.square_image_urls.url_m : 
+                        this.islandMeta?.image_urls !== undefined ? this.islandMeta?.image_urls.url_m : 
+                        this.islandMeta?.tagline.includes("Ballistic") ? "ballistic" :
+                        undefined, 
                     "largeImageText": `BetterFortniteRPC by macro (version ${BetterRPCVersion})`,
                     "details": this.islandMeta?.title,
                     "state": `By ${this.islandMeta?.supportCode}`,
